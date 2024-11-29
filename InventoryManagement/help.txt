@@ -1,0 +1,7 @@
+docker exec -it inventory_management_app python manage.py makemigrations
+docker exec -it inventory_management_app python manage.py migrate
+docker volume ls
+docker-compose down
+docker volume rm inventorymanagement_postgres_data
+ docker stop $(docker ps -q)
+ docker rm $(docker ps -a -q)
