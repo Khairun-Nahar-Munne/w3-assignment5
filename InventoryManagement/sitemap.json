@@ -1,0 +1,13 @@
+{
+    "india": {
+        "name": "India",
+        "locations": [
+            {
+                "Karnataka": "india/karnataka"
+            },
+            {
+                "Maharashtra": "india/maharashtra"
+            }
+        ]
+    }
+}

@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'app',
+    'leaflet',
+    'guardian',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'guardian.backends.ObjectPermissionBackend',  # Object-level permissions backend
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -22,6 +22,8 @@ COPY requirements.txt /app/
 # Install the Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+
+
 # Copy the rest of your project into the container
 COPY . /app/
 

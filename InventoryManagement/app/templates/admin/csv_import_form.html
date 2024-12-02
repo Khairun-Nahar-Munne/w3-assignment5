@@ -1,0 +1,14 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+  <h1>Import Locations from CSV</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="csv_file">Upload CSV File:</label>
+    <input type="file" name="csv_file" accept=".csv" required><br><br>
+    <button type="submit" class="button">Import</button>
+  </form>
+
+  <br><br>
+  <a href="{% url 'admin:app_location_changelist' %}">Back to Location List</a>
+{% endblock %}
