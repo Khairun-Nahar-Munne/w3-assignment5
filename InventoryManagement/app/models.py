@@ -4,6 +4,7 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
 from guardian.shortcuts import assign_perm
+from .validators import validate_image_urls 
 
 
 class Location(models.Model):
@@ -20,7 +21,7 @@ class Location(models.Model):
     location_type = models.CharField(max_length=20)
     country_code = models.CharField(max_length=2)
     state_abbr = models.CharField(max_length=3, blank=True, null=True)
-    city = models.CharField(max_length=30, blank=True)
+    city = models.CharField(max_length=30, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -39,7 +40,13 @@ class Accommodation(models.Model):
     review_score = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     usd_rate = models.DecimalField(max_digits=10, decimal_places=2)
     center = PointField()
-    images = ArrayField(models.CharField(max_length=300), blank=True, default=list)
+    images = ArrayField(
+        models.CharField(max_length=300), 
+        blank=True, 
+        default=list, 
+        validators=[validate_image_urls]
+    )
+    
     location = models.ForeignKey("Location", on_delete=models.CASCADE)
     amenities = JSONField(default=list)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="accommodations")

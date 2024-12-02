@@ -15,8 +15,12 @@ user: admin
 email: admin@admin.com
 password: admin123
 
+Email address: superadmin123@gmail.com
+
 
 docker exec -it inventory_management_app  bash
+
+create proper_owner:
 docker exec -it inventory_management_app python manage.py create_property_owner_group
 
 pip install django-guardian
@@ -24,3 +28,6 @@ pip install django-guardian
 docker exec -it inventory_management_app python manage.py shell
 
 docker exec -it inventory_management_app python manage.py generate_sitemap
+docker exec -it inventory_management_app python manage.py migrate app zero
+
+docker exec -it inventory_management_app python manage.py load_initial_locations

@@ -3,10 +3,29 @@
         "name": "India",
         "locations": [
             {
-                "Karnataka": "india/karnataka"
+                "karnataka": {
+                    "name": "Karnataka",
+                    "locations": []
+                }
             },
             {
-                "Maharashtra": "india/maharashtra"
+                "maharashtra": {
+                    "name": "Maharashtra",
+                    "locations": [
+                        {
+                            "mumbai": {
+                                "name": "Mumbai",
+                                "url": "india/maharashtra/mumbai"
+                            }
+                        },
+                        {
+                            "pune": {
+                                "name": "Pune",
+                                "url": "india/maharashtra/pune"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     }

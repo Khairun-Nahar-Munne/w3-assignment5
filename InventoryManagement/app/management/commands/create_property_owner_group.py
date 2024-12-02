@@ -16,7 +16,7 @@ class Command(BaseCommand):
         content_type = ContentType.objects.get_for_model(Accommodation)
         permissions = Permission.objects.filter(
             content_type=content_type,
-            codename__in=['add_accommodation', 'change_accommodation', 'view_accommodation']
+            codename__in=['add_accommodation', 'change_accommodation', 'view_accommodation', 'delete_accommodation']
         )
         group.permissions.set(permissions)
         self.stdout.write(self.style.SUCCESS('Permissions assigned to Property Owners group'))
