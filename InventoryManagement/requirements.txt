@@ -4,3 +4,5 @@ sqlparse
 psycopg2-binary
 django-leaflet
 django-guardian
+langdetect
+coverage

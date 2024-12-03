@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'app',
     'leaflet',
     'guardian',
+    
 ]
 
 AUTHENTICATION_BACKENDS = (

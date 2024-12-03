@@ -13,7 +13,7 @@ docker volume rm inventorymanagement_postgres_data
     docker exec -it inventory_management_app python manage.py createsuperuser
 user: admin
 email: admin@admin.com
-password: admin123
+password: admin
 
 Email address: superadmin123@gmail.com
 
@@ -30,4 +30,6 @@ docker exec -it inventory_management_app python manage.py shell
 docker exec -it inventory_management_app python manage.py generate_sitemap
 docker exec -it inventory_management_app python manage.py migrate app zero
 
-docker exec -it inventory_management_app python manage.py load_initial_locations
+ docker exec -it  inventory_management_db psql -U knm -d inventory_db
+
+ DROP TABLE IF EXISTS app_localizeaccommodation;

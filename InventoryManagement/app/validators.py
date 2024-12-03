@@ -1,65 +1,31 @@
+# app/validators.py
+
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from urllib.parse import urlparse
+import re
 
-def validate_image_urls(value):
-    """
-    Validates a single image URL or a list/array of image URLs.
-    Automatically wraps single string input into a list for validation.
-    """
-    print(f"Received value for validation: {value}")
+# Custom validator to check if the URL points to an image
+def validate_image_url(url):
+    # Use the URLValidator to check if the URL is well-formed
+    url_validator = URLValidator()
+    try:
+        url_validator(url)
+    except ValidationError:
+        raise ValidationError(f"{url} is not a valid URL.")
     
-    # Supported image extensions and formats
-    image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff']
-    image_formats = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff']
+    # Regex to check if the URL ends with an image file extension (e.g., .jpg, .png, .gif)
+    if not re.match(r'http(s?):\/\/.*\.(jpg|jpeg|png|gif|bmp|tiff|webp)$', url):
+        raise ValidationError(f"{url} is not a valid image URL.")
 
-    # Function to validate individual URLs
-    def validate_url(url):
-        try:
-            # Use Django's built-in URL validator
-            URLValidator()(url)  # This will catch invalid URLs early
-            
-            # Parse the URL
-            parsed_url = urlparse(url)
-            
-            # Check for scheme and netloc
-            if not parsed_url.scheme or not parsed_url.netloc:
-                raise ValidationError(f'{url} is not a valid URL.')
-            
-            # Check if URL ends with an image extension or has image format in query
-            path_lower = parsed_url.path.lower()
-            
-            # Check file extension
-            is_valid_extension = any(path_lower.endswith(ext) for ext in image_extensions)
-            
-            # Check query parameters for format
-            query_params = {}
-            if parsed_url.query:
-                query_params = dict(param.split('=') for param in parsed_url.query.split('&') if '=' in param)
-            
-            is_valid_format = query_params.get('fm') in image_formats
-            
-            # Validate either by extension or query parameter format
-            if not (is_valid_extension or is_valid_format):
-                raise ValidationError(f'{url} must be an image URL (jpg, jpeg, png, gif, webp, bmp, tiff).')
-        
-        except ValidationError as e:
-            raise e
-        except Exception:
-            raise ValidationError(f'Invalid URL: {url}')
-
-    # Automatically wrap a single string input into a list
-    if isinstance(value, str):
-        value = [value]
+# Custom validator to validate multiple image URLs from a single input
+def validate_images_field(value):
+    if not value:
+        return
     
-    # Ensure input is a list (can handle empty or None as well)
-    if not isinstance(value, (list, tuple)):
-        raise ValidationError('Input must be a list/array of URLs or a single URL string.')
-    
-    # Ensure each URL in the list is a valid string
-    for url in value:
-        if not isinstance(url, str):
-            raise ValidationError(f"Each URL must be a string, but got {type(url)}.")
-        print(f"Validating URL: {url}")  # Print URL to check if it's correctly passed
-        validate_url(url)
-
+    # Check if value is a list (as it should be for an ArrayField)
+    if isinstance(value, list):
+        for url in value:
+            validate_image_url(url)  # Validate each URL individually
+    else:
+        # If the value is not a list, raise a validation error
+        raise ValidationError("The images field should be a list of URLs.")
