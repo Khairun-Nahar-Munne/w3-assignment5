@@ -96,21 +96,16 @@ class AccommodationAdmin(LeafletGeoAdmin):
     list_filter = ("published", "location")
 
     def get_queryset(self, request):
-        """
-        This method ensures that a property owner can only see their own accommodations.
-        """
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            return queryset.filter(user=request.user)
-        return queryset
+        if request.user.is_superuser:
+            return super().get_queryset(request)
+        # Use Guardian to filter accommodations the user has access to
+        return get_objects_for_user(request.user, 'view_accommodation', klass=Accommodation)
 
     def save_model(self, request, obj, form, change):
-        """
-        Ensure that when a property owner creates a new accommodation, it's linked to their user account.
-        """
-        if not change:  # If it's a new object being created
-            obj.user = request.user
+        if not change or not obj.user:
+            obj.user = request.user  # Assign the current user when creating
         super().save_model(request, obj, form, change)
+
 
 
     settings_overrides = {
