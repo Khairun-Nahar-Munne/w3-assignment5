@@ -2,82 +2,61 @@ from django.core.management.base import BaseCommand
 from app.models import Location
 from django.utils.text import slugify
 import json
+from django.conf import settings
+import os
 
 class Command(BaseCommand):
-    help = 'Generate a sitemap.json for all locations'
+    help = 'Generates a sitemap.json file for country, state, and city locations'
 
     def handle(self, *args, **kwargs):
-        # Fetch all locations sorted alphabetically by title
-        locations = Location.objects.all().order_by('title')
+        # Fetch all country locations
+        countries = Location.objects.filter(location_type='country').order_by('title')
 
-        # Dictionary to store the country and its locations
-        sitemap_data = {}
+        sitemap_data = []
 
-        # Iterate over all locations
-        for location in locations:
-            # Handle 'country' type location (top-level)
-            if location.location_type == 'country':
-                country_slug = slugify(location.title)
-                if country_slug not in sitemap_data:
-                    sitemap_data[country_slug] = {
-                        "name": location.title,
-                        "locations": []
-                    }
+        for country in countries:
+            country_slug = slugify(country.title)
+            locations = []
 
-            # Handle 'state' locations (under countries)
-            elif location.location_type == 'state':
-                parent_location = location.parent
-                if parent_location and parent_location.location_type == 'country':
-                    country_slug = slugify(parent_location.title)
-                    state_slug = slugify(location.title)
-                    state_url = f"{country_slug}/{state_slug}"
+            # Fetch locations for the country (states)
+            sub_locations = Location.objects.filter(parent=country).order_by('title')
+
+            for location in sub_locations:
+                location_slug = slugify(location.title)
+                location_entry = {
+                    location.title: location_slug
+                }
+                
+                # Check if it's a state and fetch cities under it
+                if location.location_type == 'state':
+                    # Initialize a list for cities within this state
+                    cities_list = []
+                    cities = Location.objects.filter(parent=location).order_by('title')
                     
-                    if country_slug in sitemap_data:
-                        state_entry = {
-                            state_slug: {
-                                "name": location.title,
-                                "locations": []
-                            }
-                        }
-                        sitemap_data[country_slug]["locations"].append(state_entry)
+                    for city in cities:
+                        city_slug = slugify(city.title)
+                        cities_list.append({
+                            city.title: f"{country_slug}/{location_slug}/{city_slug}"
+                        })
 
-            # Handle 'city' locations (under states)
-            elif location.location_type == 'city':
-                parent_location = location.parent
-                if parent_location and parent_location.location_type == 'state':
-                    country_location = parent_location.parent
-                    if country_location and country_location.location_type == 'country':
-                        country_slug = slugify(country_location.title)
-                        state_slug = slugify(parent_location.title)
-                        city_slug = slugify(location.title)
-                        city_url = f"{country_slug}/{state_slug}/{city_slug}"
-                        
-                        # Find the correct country in sitemap_data
-                        for country_entry in sitemap_data.get(country_slug, {}).get("locations", []):
-                            for state_key, state_data in country_entry.items():
-                                if state_key == state_slug:
-                                    # Add city to the state's locations
-                                    state_data.setdefault("locations", []).append({
-                                        city_slug: {
-                                            "name": location.title,
-                                            "url": city_url
-                                        }
-                                    })
-                                    break
+                    # Add cities to the state entry if there are any
+                    if cities_list:
+                        location_entry['locations'] = cities_list
 
-        # Sort locations alphabetically
-        for country, data in sitemap_data.items():
-            data["locations"] = sorted(data["locations"], key=lambda x: list(x.keys())[0])
-            for state_entry in data["locations"]:
-                for state_data in state_entry.values():
-                    if "locations" in state_data:
-                        state_data["locations"] = sorted(
-                            state_data["locations"], 
-                            key=lambda x: list(x.keys())[0]
-                        )
+                locations.append(location_entry)
 
-        # Save the generated data to a JSON file
-        with open('sitemap.json', 'w') as json_file:
-            json.dump(sitemap_data, json_file, indent=4)
+            # Append country with its locations (states and cities)
+            sitemap_data.append({
+                country.title: country_slug,
+                'locations': locations
+            })
 
-        self.stdout.write(self.style.SUCCESS("Sitemap generated successfully!"))
+        # Sort the sitemap data by country title (alphabetically)
+        sitemap_data = sorted(sitemap_data, key=lambda x: list(x.keys())[0].lower())
+
+        # Output the JSON data to a file
+        output_path = os.path.join(settings.BASE_DIR, 'sitemap.json')
+        with open(output_path, 'w') as f:
+            json.dump(sitemap_data, f, indent=4)
+
+        self.stdout.write(self.style.SUCCESS(f"Sitemap generated successfully at {output_path}"))

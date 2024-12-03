@@ -1,32 +1,26 @@
-{
-    "india": {
-        "name": "India",
+[
+    {
+        "India": "india",
         "locations": [
             {
-                "karnataka": {
-                    "name": "Karnataka",
-                    "locations": []
-                }
+                "Karnataka": "karnataka",
+                "locations": [
+                    {
+                        "Bangalore": "india/karnataka/bangalore"
+                    }
+                ]
             },
             {
-                "maharashtra": {
-                    "name": "Maharashtra",
-                    "locations": [
-                        {
-                            "mumbai": {
-                                "name": "Mumbai",
-                                "url": "india/maharashtra/mumbai"
-                            }
-                        },
-                        {
-                            "pune": {
-                                "name": "Pune",
-                                "url": "india/maharashtra/pune"
-                            }
-                        }
-                    ]
-                }
+                "Maharashtra": "maharashtra",
+                "locations": [
+                    {
+                        "Mumbai": "india/maharashtra/mumbai"
+                    },
+                    {
+                        "Pune": "india/maharashtra/pune"
+                    }
+                ]
             }
         ]
     }
-}
+]
