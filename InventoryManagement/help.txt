@@ -33,3 +33,7 @@ docker exec -it inventory_management_app python manage.py migrate app zero
  docker exec -it  inventory_management_db psql -U knm -d inventory_db
 
  DROP TABLE IF EXISTS app_localizeaccommodation;
+
+docker exec -it inventory_management_app python manage.py test
+docker exec -it inventory_management_app coverage run manage.py test
+docker exec -it inventory_management_app coverage report

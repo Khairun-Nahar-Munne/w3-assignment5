@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.contrib.gis.geos import Point
 from .models import Accommodation, Location, User
@@ -165,6 +164,5 @@ class AccommodationModelTest(TestCase):
         )
         with self.assertRaises(ValidationError):
             accommodation.full_clean()
-
 
 

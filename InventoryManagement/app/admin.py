@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 from .models import Location, Accommodation, LocalizeAccommodation
@@ -8,8 +9,8 @@ from io import StringIO
 from django.urls import path, reverse
 from django.shortcuts import redirect, render
 from io import StringIO
-from guardian.shortcuts import get_objects_for_user
-from django.utils.html import format_html
+from django.contrib.auth.models import User, Group
+
 
 
 @admin.register(Location)
@@ -22,8 +23,8 @@ class LocationAdmin(LeafletGeoAdmin):
         "state_abbr",
         "city",
     )
-    search_fields = ("title", "location_type", "country_code")
-    list_filter = ("location_type",)
+    search_fields = ("title", "city", "state_abbr", "country_code")
+    list_filter = ("location_type", "country_code")
 
     def changelist_view(self, request, extra_context=None):
         """
@@ -91,22 +92,57 @@ class LocationAdmin(LeafletGeoAdmin):
 
 @admin.register(Accommodation)
 class AccommodationAdmin(LeafletGeoAdmin):
-    list_display = ("id", "title", "user", "location", "bedroom_count", "published")
-    search_fields = ("title",)
-    list_filter = ("published", "location")
+    list_display = ("id",
+        "title",
+        "country_code",
+        "bedroom_count",
+        "review_score",
+        "usd_rate",
+        "location",
+        "published",
+        "created_at",
+        "updated_at",)
+    
+    list_filter = ("country_code", "location", "published")
+    search_fields = ("title", "country_code", "location__title")
+    readonly_fields = ("created_at", "updated_at")
+
 
     def get_queryset(self, request):
-        if request.user.is_superuser:
-            return super().get_queryset(request)
-        # Use Guardian to filter accommodations the user has access to
-        return get_objects_for_user(request.user, 'view_accommodation', klass=Accommodation)
+        queryset = super().get_queryset(request)
+        if (
+            request.user.groups.filter(name="Property Owners").exists()
+            and request.user.is_active
+        ):
+            return queryset.filter(user=request.user)  # Filter for Property Owners
+        return queryset  # Return all accommodations for admin users
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "user":
+            if request.user.is_superuser or request.user.groups.filter(name="Admins").exists():
+                # Admins/Superusers: Allow full selection of users
+                kwargs["queryset"] = User.objects.all()
+            elif request.user.groups.filter(name="Property Owners").exists():
+                # Property Owners: Restrict to their own user
+                kwargs["queryset"] = User.objects.filter(id=request.user.id)
+                kwargs["initial"] = request.user
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+def get_readonly_fields(self, request, obj=None):
+    # Property Owners cannot modify the `user` field
+    if request.user.groups.filter(name="Property Owners").exists():
+        return ["user"]
+    return super().get_readonly_fields(request, obj)
 
     def save_model(self, request, obj, form, change):
         if not change or not obj.user:
             obj.user = request.user  # Assign the current user when creating
         super().save_model(request, obj, form, change)
-
-
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "user":
+            kwargs["queryset"] = User.objects.filter(id=request.user.id)  # Restrict to current user
+            kwargs["initial"] = request.user  # Pre-fill the current user
+            kwargs["disabled"] = True  # Make the field read-only
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     settings_overrides = {
         "DEFAULT_CENTER": (0, 0),  # Default center of the map
@@ -120,6 +156,6 @@ class AccommodationAdmin(LeafletGeoAdmin):
 
 @admin.register(LocalizeAccommodation)
 class LocalizeAccommodationAdmin(admin.ModelAdmin):
-    list_display = ("id", "property", "language")
+    list_display = ("id", "property", "language", "description")
     search_fields = ("property__title", "language")
     list_filter = ("language",)

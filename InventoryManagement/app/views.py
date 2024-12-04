@@ -3,28 +3,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from .forms import PropertyOwnerSignupForm
-from guardian.shortcuts import get_objects_for_user
-from django.shortcuts import get_object_or_404
-from .models import Accommodation
-
-
-def view_accommodation(request, pk):
-    accommodation = get_object_or_404(
-        get_objects_for_user(request.user, "view_accommodation", klass=Accommodation),
-        pk=pk,
-    )
-    return render(
-        request, "accommodation_detail.html", {"accommodation": accommodation}
-    )
-
-
-def edit_accommodation(request, pk):
-    accommodation = get_object_or_404(
-        get_objects_for_user(request.user, "change_accommodation", klass=Accommodation),
-        pk=pk,
-    )
-    # Handle editing logic
-    return render(request, "accommodation_edit.html", {"accommodation": accommodation})
 
 
 def property_owner_signup(request):
@@ -54,4 +32,4 @@ def property_owner_signup(request):
 
 
 def index(request):
-    return HttpResponse("Successfully Signed Up!")
+    return HttpResponse("Home Page")
