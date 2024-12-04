@@ -229,3 +229,6 @@ To generate a sitemap.json file for all country locations.
 
 
 
+docker exec -it inventory_management_app python manage.py create_property_owner_group
+    docker exec -it inventory_management_app python manage.py createsuperuser
+docker exec -it inventory_management_app python manage.py generate_sitemap

@@ -94,6 +94,7 @@ class LocationAdmin(LeafletGeoAdmin):
 class AccommodationAdmin(LeafletGeoAdmin):
     list_display = ("id",
         "title",
+        "user",
         "country_code",
         "bedroom_count",
         "review_score",
@@ -116,6 +117,7 @@ class AccommodationAdmin(LeafletGeoAdmin):
         ):
             return queryset.filter(user=request.user)  # Filter for Property Owners
         return queryset  # Return all accommodations for admin users
+    
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "user":
             if request.user.is_superuser or request.user.groups.filter(name="Admins").exists():
@@ -127,31 +129,26 @@ class AccommodationAdmin(LeafletGeoAdmin):
                 kwargs["initial"] = request.user
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-def get_readonly_fields(self, request, obj=None):
-    # Property Owners cannot modify the `user` field
-    if request.user.groups.filter(name="Property Owners").exists():
-        return ["user"]
-    return super().get_readonly_fields(request, obj)
+    def get_readonly_fields(self, request, obj=None):
+        # Property Owners cannot modify the `user` field
+        if request.user.groups.filter(name="Property Owners").exists():
+            return ["user"]
+        return super().get_readonly_fields(request, obj)
 
     def save_model(self, request, obj, form, change):
-        if not change or not obj.user:
-            obj.user = request.user  # Assign the current user when creating
-        super().save_model(request, obj, form, change)
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "user":
-            kwargs["queryset"] = User.objects.filter(id=request.user.id)  # Restrict to current user
-            kwargs["initial"] = request.user  # Pre-fill the current user
-            kwargs["disabled"] = True  # Make the field read-only
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+            if not change or not obj.user:
+                obj.user = request.user  # Assign the current user when creating
+            super().save_model(request, obj, form, change)
+        
 
     settings_overrides = {
-        "DEFAULT_CENTER": (0, 0),  # Default center of the map
-        "DEFAULT_ZOOM": 3,  # Default zoom level
-        "MAX_ZOOM": 18,  # Maximum zoom level
-        "SCROLL_ZOOM": True,  # Enable zoom with mouse scroll
-        "DRAGGABLE": True,  # Allow panning of the map
-        "TOUCH_ZOOM": True,  # Allow pinch zoom on touch devices
-    }
+            "DEFAULT_CENTER": (0, 0),  # Default center of the map
+            "DEFAULT_ZOOM": 3,  # Default zoom level
+            "MAX_ZOOM": 18,  # Maximum zoom level
+            "SCROLL_ZOOM": True,  # Enable zoom with mouse scroll
+            "DRAGGABLE": True,  # Allow panning of the map
+            "TOUCH_ZOOM": True,  # Allow pinch zoom on touch devices
+        }
 
 
 @admin.register(LocalizeAccommodation)
@@ -159,3 +156,4 @@ class LocalizeAccommodationAdmin(admin.ModelAdmin):
     list_display = ("id", "property", "language", "description")
     search_fields = ("property__title", "language")
     list_filter = ("language",)
+

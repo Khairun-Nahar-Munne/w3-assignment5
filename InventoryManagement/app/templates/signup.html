@@ -139,7 +139,7 @@
                     id="{{ form.username.id_for_label }}" 
                     placeholder="Username" 
                     autocomplete="off" 
-                    value=""
+                    value="{{ form.username.value|default:'' }}"
                 >
                 {% if form.username.errors %}
                 <div class="error-message">
@@ -158,7 +158,7 @@
                     id="{{ form.email.id_for_label }}" 
                     placeholder="Email" 
                     autocomplete="off" 
-                    value=""
+                    value="{{ form.email.value|default:'' }}"
                 >
                 {% if form.email.errors %}
                 <div class="error-message">
@@ -177,7 +177,7 @@
                     id="{{ form.first_name.id_for_label }}" 
                     placeholder="First Name" 
                     autocomplete="off" 
-                    value=""
+                    value="{{ form.first_name.value|default:'' }}"
                 >
                 {% if form.first_name.errors %}
                 <div class="error-message">
@@ -196,7 +196,7 @@
                     id="{{ form.last_name.id_for_label }}" 
                     placeholder="Last Name" 
                     autocomplete="off" 
-                    value=""
+                    value="{{ form.last_name.value|default:'' }}"
                 >
                 {% if form.last_name.errors %}
                 <div class="error-message">
@@ -215,7 +215,7 @@
                     id="{{ form.password.id_for_label }}" 
                     placeholder="Password" 
                     autocomplete="new-password" 
-                    value=""
+                    value="{{ form.password.value|default:'' }}"
                 >
                 {% if form.password.errors %}
                 <div class="error-message">

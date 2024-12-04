@@ -24,7 +24,7 @@ class Command(BaseCommand):
             for location in sub_locations:
                 location_slug = slugify(location.title)
                 location_entry = {
-                    location.title: location_slug
+                    location.title: f"{country_slug}/{location_slug}"
                 }
                 
                 # Check if it's a state and fetch cities under it
