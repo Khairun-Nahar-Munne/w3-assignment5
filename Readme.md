@@ -38,6 +38,7 @@ Ensure you have the following installed:
 - Python 3.x
 - PostgreSQL
 - Git
+- Docker
 
 ## Project Structure
 
@@ -49,13 +50,15 @@ inventory_management/
 ├── manage.py
 ├── requirements.txt
 ├── README.md
+├── sitemap.json
+├── .coverage
 │
 ├── inventory_management/
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
-│   ├── wsgi.py
+│   └── wsgi.py
 │
 ├── app/
 │   ├── __init__.py
@@ -63,9 +66,13 @@ inventory_management/
 │   ├── apps.py
 │   ├── migrations/
 │   │   ├── __init__.py
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_partition_accommodation.py
+│   │   └── _003_partition_localize_accommodation.py
 │   ├── management/
 │   │   ├── __init__.py
 │   │   └── commands
+|   |       ├── __init__.py
 │   │       ├── create_property_owner_group.py
 │   │       └── generate_sitemap.py
 │   ├── templates/
@@ -77,8 +84,13 @@ inventory_management/
 │   │               └──change_list.html
 │   │
 │   ├── models.py
+│   ├── test_forms.py
+│   ├── test_localizedacco.py
+│   ├── test_validators.py
+│   ├── tests_views.py
 │   ├── tests.py
 │   ├── views.py
+│   ├── validators.py
 │   ├── urls.py
 │   └──forms.py
 ├── .gitignore

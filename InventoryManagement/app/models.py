@@ -104,14 +104,7 @@ class LocalizeAccommodation(models.Model):
         if detected_description_language != self.language:
             raise ValidationError(f"The description is not in the selected language ({self.language}). Detected language: {detected_description_language}")
 
-        # Detect language for each policy value
-        for policy_key, policy_value in self.policy.items():
-            detected_policy_language = detect(policy_value)
-            if detected_policy_language.startswith('zh'):
-                detected_policy_language = 'zh'
 
-            if detected_policy_language != self.language:
-                raise ValidationError(f"The policy '{policy_key}' is not in the selected language ({self.language}). Detected language: {detected_policy_language}")
 
     def __str__(self):
         return f"{self.property.title} - {self.language}"
