@@ -282,7 +282,7 @@ The project includes the following models:
 To generate a sitemap.json file for all country locations. Sitemap will be generate for basic regions: Country, State and City.
 
 ```bash
-docker exec -it Iinventory_management_app  python manage.py generate_sitemap
+docker exec -it inventory_management_app  python manage.py generate_sitemap
 ```
 
 ## Testing Instructions
