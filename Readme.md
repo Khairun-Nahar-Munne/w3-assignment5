@@ -92,7 +92,7 @@ inventory_management/
 │   ├── validators.py
 │   ├── urls.py
 │   └──forms.py
-├── requirements.txt
+└── requirements.txt
 ```
 
 
