@@ -158,12 +158,12 @@ The project includes the following models:
 
 1. Apply migrations:
    ```bash
-   docker exec -it InventoryManagement python manage.py migrate
+   docker exec -it inventory_management_app python manage.py migrate
    ```
 
 2. Create a superuser:
    ```bash
-   docker exec -it InventoryManagement python manage.py createsuperuser
+   docker exec -it inventory_management_app python manage.py createsuperuser
 
    username: your admin username
    email: your email
@@ -282,7 +282,7 @@ The project includes the following models:
 To generate a sitemap.json file for all country locations. Sitemap will be generate for basic regions: Country, State and City.
 
 ```bash
-docker exec -it InventoryManagement python manage.py generate_sitemap
+docker exec -it Iinventory_management_app  python manage.py generate_sitemap
 ```
 
 ## Testing Instructions
@@ -290,14 +290,14 @@ docker exec -it InventoryManagement python manage.py generate_sitemap
 ### Test
 
    ```
-   docker exec -it InventoryManagement python manage.py test
+   docker exec -it inventory_management_app  python manage.py test
    ```
 
 ### Test Coverage
    ```
-   docker exec -it InventoryManagement coverage run manage.py test
-   docker exec -it InventoryManagement coverage report
-   docker exec -it inventoryManagement coverage html
+   docker exec -it inventory_management_app coverage run manage.py test
+   docker exec -it inventory_management_app coverage report
+   docker exec -it inventory_management_app coverage html
    ```
 
    Open the `htmlcov/index.html` file in a web browser to view the detailed coverage report.
