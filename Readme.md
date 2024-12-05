@@ -20,10 +20,9 @@ Inventory Management is a Django application. It is designed to store and manage
 ## Features
 
 - **Property Management**: Store and manage detailed property information.
-- **Image Handling**: 
-- **Location Management**: 
-- **Amenity Tracking**: 
-- **Django Admin Interface**: 
+- **Localise Accomodation**: Handle language detection in property description
+- **Location Management**: Store and manage location Information
+- **Database Partition**: Provide partitioned database of accomodation and localise accomodation.
 
 ## Technologies Used
 
@@ -49,7 +48,6 @@ inventory_management/
 ├── Dockerfile
 ├── manage.py
 ├── requirements.txt
-├── README.md
 ├── sitemap.json
 ├── .coverage
 │
@@ -93,7 +91,6 @@ inventory_management/
 │   ├── validators.py
 │   ├── urls.py
 │   └──forms.py
-├── .gitignore
 └── sitemap.json
 ```
 ## Getting Started
@@ -118,63 +115,102 @@ inventory_management/
    ```
 4. Docker Set Up:
    ```bash
-   npm InventoryManagement 
+   cd InventoryManagement 
    docker build
    docker up
    ```
-### Database Configuration
-
-1. Create a `config.py` file in the DjangoAssignment root directory and add your PostgreSQL credentials:
-
-   ```python
-   # config.py
-   DB_USERNAME = 'your_username'
-   DB_PASSWORD = 'your_password'
-   DB_HOST = 'localhost'
-   DB_PORT = 'port'
-   DJANGO_DBNAME = 'django_project_database_name'
-   SECRET_KEY = 'your SECRET_KEY'
-   ```
-
-2. Create a `.env` file in the DjangoAssignment root directory and add your PostgreSQL credentials:
+5. PgAdmin Set Up:
 
    ```
-      DB_USERNAME=your_username
-      DB_PASSWORD=your_password
-      DB_HOST=localhost
-      DB_PORT=port
-      DJANGO_DBNAME=django_project_database_name
-      SECRET_KEY=your_SECRET_KEY
+   - Launch pgAdmin on http://localhost:5050 in your browser.
+
+   - Provide Admin Email: admin@admin.com and Password: admin
+
+   - Right-click on "Servers" > Click on "Register" > "Server".
+
+   -Fill in the details:
+
+      General Tab:
+      Name your connection: InventoryDB
+
+      Connection Tab:
+      Host: db
+      Port: 5432 
+      Maintenance Database: postgres.
+      Username: knm
+      Password: knm123
+
    ```
-
-3. Ensure PostgreSQL is running and create the necessary databases:
-
-```bash
-   psql -U your_username
-   CREATE DATABASE django_project_database_name;
-```
-
 ### Running the Application
 
-```bash
-      docker-compose up --build -d
-```
+
 1. Apply migrations:
    ```bash
-   docker exec -it InventoryManagement python manage.py makemigrations
    docker exec -it InventoryManagement python manage.py migrate
    ```
 
 2. Create a superuser:
    ```bash
    docker exec -it InventoryManagement python manage.py createsuperuser
+
+   username: admin
+   email: admin@gmail.com
+   password: admin123
    ```
 
 3. Start the development server:
-   ```bash
-   docker exec -it inventoryManagement python manage.py runserver 0.0.0.0:8000
+   ```
+   - Put `http://localhost:8000/admin/` in your browser
+   ```
+4. Login as an Admin:
+
+    ```bash
+   username: admin
+   password: admin123
    ```
 
+5. Make a csv file:
+   ```
+   ```
+
+6. Location Model:
+   ```
+   - Location> Click On Impost CSV file> Import CSV file > Submit
+
+   - You can also add location manually by clicking on add option.
+   ```
+7. Create Property Owner Group:
+    ```bash
+   docker exec -it inventory_management_app python manage.py create_property_owner_group
+
+   ```
+7. Signup as a Property Owner:
+
+    ```bash
+   username: your username
+   email: your email
+   first name: your first name
+   last name: your last name
+   password: your password
+   ```
+
+4. Login as an Admin:
+
+    ```bash
+   - 
+   ```
+6. Accomodation Model:
+   ```
+   - Location> Click On Impost CSV file> Import CSV file > Submit
+
+   - You can also add location manually by clicking on add option.
+   ```
+6. Localise Model:
+   ```
+   - Location> Click On Impost CSV file> Import CSV file > Submit
+
+   - You can also add location manually by clicking on add option.
+   ```
 
 ## Usage
 
